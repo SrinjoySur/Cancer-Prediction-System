@@ -1,0 +1,26 @@
+import plotly.express as px 
+import pandas as pd
+import numpy as np
+import geopandas as gpd
+import matplotlib.pyplot as plt 
+path = r"C:\Users\Nicholas\Downloads\cancer-data - Sheet1.csv"
+df = pd.read_csv(path)
+df.columns
+df_geo = gpd.GeoDataFrame(df, geometry = gpd.points_from_xy(df.longitude, df.lat))
+worldmap = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+fig, ax = plt.subplots(figsize=(12, 6))
+worldmap.plot(color="lightgrey", ax=ax)
+x = df['longitude']
+y = df['lat']
+plt.scatter(x, y, c= df['Value'],alpha=0.6, vmin=0,cmap='autumn')
+plt.colorbar(label='cancer range')
+plt.xlim([-180, 180])
+plt.ylim([-50, 75])
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+f = px.choropleth(df,
+                  locationmode = 'country names',
+                  locations = df['Population'],
+                  scope = 'world',
+                  color = df['Value'])
+f.show()
